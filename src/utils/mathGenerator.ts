@@ -1,4 +1,4 @@
-import type { SpeedTouchQuestion, SizeCompareQuestion, TargetGaugeQuestion, BossQuizQuestion } from '../types';
+import type { SpeedTouchQuestion, SizeCompareQuestion, TargetGaugeQuestion, BossQuestion } from '../types';
 
 // 무작위 정수 생성
 function getRandomInt(min: number, max: number): number {
@@ -23,28 +23,24 @@ export function generateSpeedTouchQuestion(): SpeedTouchQuestion {
   let wrongAnswers: string[] = [];
 
   if (type === 1) {
-    // mm -> cm (예: 50 mm = ? cm)
     const cm = getRandomInt(1, 20);
     const mm = cm * 10;
     promptText = `${mm} mm = ? cm`;
     correctAnswer = `${cm} cm`;
     wrongAnswers = [`${cm * 10} cm`, `${cm * 100} cm`, `${Math.max(1, cm - 1)} cm`].filter(a => a !== correctAnswer);
   } else if (type === 2) {
-    // cm -> m (예: 400 cm = ? m)
     const m = getRandomInt(1, 15);
     const cm = m * 100;
     promptText = `${cm.toLocaleString()} cm = ? m`;
     correctAnswer = `${m} m`;
     wrongAnswers = [`${m * 10} m`, `${m * 100} m`, `${Math.max(1, m + 2)} m`].filter(a => a !== correctAnswer);
   } else if (type === 3) {
-    // m -> km (예: 3,000 m = ? km)
     const km = getRandomInt(1, 9);
     const m = km * 1000;
     promptText = `${m.toLocaleString()} m = ? km`;
     correctAnswer = `${km} km`;
     wrongAnswers = [`${km * 10} km`, `${km * 100} km`, `${Math.max(1, km + 1)} km`].filter(a => a !== correctAnswer);
   } else {
-    // 복합 (예: 2 m 30 cm = ? cm)
     const m = getRandomInt(1, 5);
     const cm = getRandomInt(5, 95);
     const totalCm = m * 100 + cm;
@@ -154,9 +150,9 @@ export function generateTargetGaugeQuestion(): TargetGaugeQuestion {
   };
 }
 
-// 4. 보스전 5문항 4지선다 퀴즈 생성
-export function generateBossQuiz(): BossQuizQuestion[] {
-  const questions: BossQuizQuestion[] = [
+// 4. 보스전 5문항 4지선다 퀴즈 생성 (BossQuestion / generateBossQuestions 통일)
+export function generateBossQuestions(): BossQuestion[] {
+  const questions: BossQuestion[] = [
     (() => {
       const cm = getRandomInt(12, 45);
       const mm = cm * 10;
@@ -255,5 +251,3 @@ export function generateBossQuiz(): BossQuizQuestion[] {
 
   return questions;
 }
-
-export const generateBossQuestions = generateBossQuiz;
