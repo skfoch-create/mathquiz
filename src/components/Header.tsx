@@ -13,12 +13,12 @@ export const Header: React.FC<HeaderProps> = ({ user, currentTab, onSelectTab, o
   return (
     <header className="main-header glass-nav">
       <div className="header-container">
-        {/* 심플한 로고 */}
+        {/* 로고 */}
         <div className="logo-section" onClick={() => onSelectTab('lobby')}>
           <span className="logo-title">📏 길이 단위 대탐험</span>
         </div>
 
-        {/* 통통 튀는 네이밍 탭 */}
+        {/* 통일된 탭 네이밍 */}
         <nav className="nav-menu">
           <button
             className={`nav-item ${currentTab === 'lobby' ? 'active' : ''}`}
@@ -30,25 +30,25 @@ export const Header: React.FC<HeaderProps> = ({ user, currentTab, onSelectTab, o
             className={`nav-item ${currentTab === 'game1' ? 'active' : ''}`}
             onClick={() => onSelectTab('game1')}
           >
-            ⚡ 단위 팡팡
+            ⚡ 스피드탭
           </button>
           <button
             className={`nav-item ${currentTab === 'game2' ? 'active' : ''}`}
             onClick={() => onSelectTab('game2')}
           >
-            ⚖️ 길이 쿵쿵
+            ⚖️ 길이비교
           </button>
           <button
             className={`nav-item ${currentTab === 'game3' ? 'active' : ''}`}
             onClick={() => onSelectTab('game3')}
           >
-            🎯 조각 합체
+            🎯 조각합체전
           </button>
           <button
             className={`nav-item boss-nav ${currentTab === 'boss' ? 'active' : ''}`}
             onClick={() => onSelectTab('boss')}
           >
-            <ShieldAlert size={16} /> 대마왕 보스전
+            <ShieldAlert size={16} /> 보스전
           </button>
           <button
             className={`nav-item ${currentTab === 'leaderboard' ? 'active' : ''}`}

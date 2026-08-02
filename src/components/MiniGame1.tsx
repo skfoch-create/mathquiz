@@ -87,8 +87,8 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
       <div className="game-header-card glass-card">
         <div className="game-title-group">
           <span className="game-badge badge-a">25초 타임어택</span>
-          <h2>⚡ 번개 손가락! 단위 팡팡</h2>
-          <p>25초 동안 수치와 똑같은 정답 카드를 번개처럼 빠르게 팡팡 터치하세요!</p>
+          <h2>⚡ 스피드탭</h2>
+          <p>25초 동안 수치와 똑같은 정답 카드를 번개처럼 빠르게 탭하세요!</p>
         </div>
 
         {!isPlaying && !isGameOver && (

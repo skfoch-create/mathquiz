@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, LogIn, Sparkles } from 'lucide-react';
+import { User, LogIn, Sparkles, X } from 'lucide-react';
 import { isFirebaseConfigured, auth, googleProvider, signInWithPopup, signInAnonymously } from '../firebase';
 import { getOrCreateUser } from '../services/dataService';
 import type { UserProfile } from '../types';
@@ -17,7 +17,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
 
   if (!isOpen) return null;
 
-  // 1. 간편 익명 접속 (닉네임만 입력)
   const handleAnonymousSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nickname.trim()) return;
@@ -34,16 +33,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
       onClose();
     } catch (err) {
       console.error(err);
-      alert('접속 중 오류가 발생했습니다.');
+      alert('접속 중 오류가 발생했습니다. Firebase Authentication 설정 상태를 확인해 주세요.');
     } finally {
       setLoading(false);
     }
   };
 
-  // 2. Google 계정 로그인
   const handleGoogleLogin = async () => {
     if (!isFirebaseConfigured || !auth) {
-      // Firebase Env 설정이 없으면 테스트용 모의 구글 로그인 처리
       const dummyUid = 'google_user_' + Date.now();
       const user = await getOrCreateUser(dummyUid, '구글 탐험가', 'google');
       onLoginSuccess(user);
@@ -54,12 +51,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const user = await getOrCreateUser(result.user.uid, result.user.displayName || '구글 학생', 'google');
+      const user = await getOrCreateUser(result.user.uid, result.user.displayName || '구글 탐험가', 'google');
       onLoginSuccess(user);
       onClose();
     } catch (err) {
       console.error(err);
-      alert('Google 로그인에 실패했습니다.');
+      alert('Google 로그인 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -67,13 +64,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content glass-card animate-pop">
+      <div className="modal-content glass-card animate-pop beautiful-auth">
+        <button className="close-btn" onClick={onClose} title="닫기">
+          <X size={20} />
+        </button>
+
         <div className="modal-header">
-          <div className="badge-icon">
-            <Sparkles className="text-yellow" size={28} />
+          <div className="cute-badge-icon">
+            <Sparkles className="text-yellow" size={32} />
           </div>
           <h2>탐험가 프로필 설정</h2>
-          <p className="subtitle">원하는 접속 방식을 선택하세요!</p>
+          <p className="subtitle">원하는 접속 방식을 선택해 보세요!</p>
         </div>
 
         <div className="tab-buttons">
@@ -94,22 +95,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
         {mode === 'anonymous' ? (
           <form onSubmit={handleAnonymousSubmit} className="auth-form">
             <div className="input-group">
-              <label>학생 닉네임 / 이름</label>
+              <label className="input-label">학생 닉네임 / 이름</label>
               <div className="input-wrapper">
                 <User size={20} className="input-icon" />
                 <input
                   type="text"
-                  placeholder="예: 3학년1반김길이"
+                  placeholder="예: 3학년김길이"
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   maxLength={12}
                   required
                 />
               </div>
-              <span className="hint">별도의 비밀번호 없이 이름만으로 빠르게 탐험을 시작합니다.</span>
+              <span className="hint">비밀번호 없이 이름만으로 빠르게 탐험을 시작합니다.</span>
             </div>
 
-            <button type="submit" className="btn-primary full-width shadow-btn" disabled={loading}>
+            <button type="submit" className="btn-primary full-width shadow-btn cute-btn" disabled={loading}>
               {loading ? '접속 중...' : '🎮 게임 시작하기'}
             </button>
           </form>
@@ -117,11 +118,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
           <div className="google-auth-box">
             <p className="desc">
               Google 계정으로 로그인하면 기기가 바뀌어도 <br />
-              <b>모은 골드, 클리어 기록, 보스전 성장 그래프</b>가 연동됩니다!
+              <b>골드와 클리어 기록</b>이 동기화됩니다!
             </p>
             <button
               onClick={handleGoogleLogin}
-              className="btn-google full-width shadow-btn"
+              className="btn-google full-width shadow-btn cute-btn"
               disabled={loading}
             >
               <LogIn size={20} />

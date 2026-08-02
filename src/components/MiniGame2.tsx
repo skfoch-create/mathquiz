@@ -80,8 +80,8 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
       <div className="game-header-card glass-card">
         <div className="game-title-group">
           <span className="game-badge badge-b">25초 순발력</span>
-          <h2>⚖️ 누가 더 길까? 길이 쿵쿵</h2>
-          <p>지시어(더 긴 길이 / 더 짧은 길이)에 맞는 카드를 순발력있게 고르세요!</p>
+          <h2>⚖️ 길이비교</h2>
+          <p>지시어(더 긴 길이 / 더 짧은 길이)에 맞는 카드를 순발력 있게 고르세요!</p>
         </div>
 
         {!isPlaying && !isGameOver && (

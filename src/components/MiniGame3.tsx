@@ -102,7 +102,7 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
       <div className="game-header-card glass-card">
         <div className="game-title-group">
           <span className="game-badge badge-c">30초 조준</span>
-          <h2>🎯 딱 맞춰라! 조각 합체</h2>
+          <h2>🎯 조각합체전</h2>
           <p>수치 조각들을 모아서 100% 목표 게이지에 딱 맞추세요!</p>
         </div>
 

@@ -11,13 +11,13 @@ interface LobbyViewProps {
 export const LobbyView: React.FC<LobbyViewProps> = ({ onSelectTab }) => {
   return (
     <div className="clean-lobby animate-fade-in">
-      {/* 심플한 환영 제목 */}
+      {/* 서두 환영 문구 */}
       <div className="lobby-welcome glass-card">
         <h1>📏 초등 길이 단위 대탐험</h1>
         <p>미니게임에서 골드를 신나게 모으고, 최종 대마왕 보스를 무찔러 보세요!</p>
       </div>
 
-      {/* 1. 미니게임 3개 가로로 나란히 배열 (3열) */}
+      {/* 미니게임 3종 (가로 3열 나란히) */}
       <div className="lobby-section">
         <h2 className="section-title">🎮 20~30초 미니게임 3종</h2>
         <div className="minigame-3grid">
@@ -29,8 +29,8 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ onSelectTab }) => {
                 <Zap size={28} />
               </div>
             </div>
-            <h3>⚡ 번개 손가락! 단위 팡팡</h3>
-            <p>제시된 길이 수치와 똑같은 정답 카드를 빠르게 터치하세요!</p>
+            <h3>⚡ 스피드탭</h3>
+            <p>제시된 길이 수치와 똑같은 정답 카드를 누구보다 빠르게 탭하세요!</p>
             <div className="mode-footer">
               <span>게임 시작</span>
               <ArrowRight size={16} />
@@ -45,8 +45,8 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ onSelectTab }) => {
                 <Scale size={28} />
               </div>
             </div>
-            <h3>⚖️ 누가 더 길까? 길이 쿵쿵</h3>
-            <p>더 긴 길이 수치나 더 짧은 수치를 순발력 있게 고르세요!</p>
+            <h3>⚖️ 길이비교</h3>
+            <p>더 긴 수치나 더 짧은 수치를 순발력 있게 비교하여 고르세요!</p>
             <div className="mode-footer">
               <span>게임 시작</span>
               <ArrowRight size={16} />
@@ -61,8 +61,8 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ onSelectTab }) => {
                 <Target size={28} />
               </div>
             </div>
-            <h3>🎯 딱 맞춰라! 조각 합체</h3>
-            <p>수치 조각들을 착착 모아서 목표 게이지 100%를 만드세요!</p>
+            <h3>🎯 조각합체전</h3>
+            <p>길이 조각들을 착착 모아서 목표 게이지 100%를 만드세요!</p>
             <div className="mode-footer">
               <span>게임 시작</span>
               <ArrowRight size={16} />
@@ -71,7 +71,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ onSelectTab }) => {
         </div>
       </div>
 
-      {/* 2. 미니게임 나란히 3개 바로 아래 배열된 큼직한 보스전 카운터 카드 */}
+      {/* 보스전 도전 버튼 텍스트 수정: '보스전 도전하기' */}
       <div className="boss-entry-wrapper">
         <div className="boss-card glass-card hover-card" onClick={() => onSelectTab('boss')}>
           <div className="boss-card-left">
@@ -86,12 +86,12 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ onSelectTab }) => {
           </div>
 
           <button className="btn-boss-entry shadow-btn">
-            <Swords size={20} /> 보스에게 도전하기
+            <Swords size={20} /> 보스전 도전하기
           </button>
         </div>
       </div>
 
-      {/* 3. 하단 명예의 전당 배너 */}
+      {/* 명예의 전당 배너 */}
       <div className="hall-banner glass-card" onClick={() => onSelectTab('leaderboard')}>
         <div>
           <h2>🏆 명예의 전당 (골드 왕 & 클리어 왕 TOP 10)</h2>
