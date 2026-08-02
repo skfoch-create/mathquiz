@@ -57,7 +57,6 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
     }
   };
 
-  // 블록 선택/해제
   const toggleBlock = (blockId: string) => {
     if (!currentQuestion || !isPlaying) return;
 
@@ -69,13 +68,11 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
     }
     setSelectedBlockIds(newSelected);
 
-    // 현재 합계 계산
     const currentSum = newSelected.reduce((acc, id) => {
       const block = currentQuestion.availableBlocks.find((b) => b.id === id);
       return acc + (block ? block.valueInMm : 0);
     }, 0);
 
-    // 목표치 도달 검사
     if (currentSum === currentQuestion.targetValueInMm) {
       setScore((prev) => prev + 1);
       setTimeout(() => {
@@ -85,7 +82,6 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
     }
   };
 
-  // 현재 게이지 비율 (0~100%)
   const currentSumInMm = currentQuestion
     ? selectedBlockIds.reduce((acc, id) => {
         const block = currentQuestion.availableBlocks.find((b) => b.id === id);
@@ -98,18 +94,20 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
   const isOver = currentSumInMm > targetMm;
 
   return (
-    <div className="game-container animate-fade-in">
+    <div className="game-container animate-fade-in notranslate">
       <div className="game-header-card glass-card">
-        <div className="game-title-group">
-          <span className="game-badge badge-c">30초 조준</span>
-          <h2>🎯 조각합체전</h2>
-          <p>수치 조각들을 모아서 100% 목표 게이지에 딱 맞추세요!</p>
+        <div className="badge-wrapper">
+          <span className="mode-badge badge-c">🎯 30초 조준</span>
         </div>
+        <h2>🎯 조각합체전</h2>
+        <p>수치 조각들을 모아서 100% 목표 게이지에 딱 맞추세요!</p>
 
         {!isPlaying && !isGameOver && (
-          <button className="btn-start-game shadow-btn" onClick={startGame}>
-            🚀 게임 시작 (30초 제한)
-          </button>
+          <div className="start-btn-wrapper">
+            <button className="btn-start-game" onClick={startGame}>
+              🚀 게임 시작 (30초)
+            </button>
+          </div>
         )}
       </div>
 
@@ -117,8 +115,8 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
         <div className="game-play-area">
           <div className="game-status-bar">
             <div className="timer-box">
-              <Timer size={22} className="text-yellow" />
-              <span className="time-value">{timeLeft}초</span>
+              <Timer size={20} className="text-yellow" />
+              <span className="time-value">{timeLeft}초 남음</span>
             </div>
             <div className="score-box">
               <span>완성된 목표: <b>{score}개</b></span>
@@ -127,11 +125,10 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
 
           <div className="target-card glass-card">
             <div className="target-header">
-              <Target size={26} className="text-yellow animate-bounce" />
+              <Target size={24} className="text-yellow" />
               <h2>목표: <span className="text-highlight">{currentQuestion.targetText}</span></h2>
             </div>
 
-            {/* 게이지 바 */}
             <div className="gauge-container">
               <div
                 className={`gauge-fill ${isOver ? 'over' : ''}`}
@@ -143,7 +140,6 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
             {isOver && <p className="over-warning">⚠️ 목표치를 초과했습니다! 블록을 다시 클릭하여 취소하세요.</p>}
           </div>
 
-          {/* 선택 가능한 수치 조각들 */}
           <div className="blocks-grid">
             {currentQuestion.availableBlocks.map((block) => {
               const isSelected = selectedBlockIds.includes(block.id);
@@ -154,7 +150,7 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
                   onClick={() => toggleBlock(block.id)}
                 >
                   {block.text}
-                  {isSelected && <CheckCircle2 size={18} className="check-icon" />}
+                  {isSelected && <CheckCircle2 size={16} className="check-icon" />}
                 </button>
               );
             })}
@@ -174,17 +170,17 @@ export const MiniGame3: React.FC<MiniGame3Props> = ({ user, onUpdateUser, onBack
             <div className="stat-card highlight">
               <span className="stat-label">획득한 골드</span>
               <span className="stat-val text-yellow">
-                <Coins size={20} /> +{earnedGold} G
+                <Coins size={20} /> +{earnedGold} 골드
               </span>
             </div>
           </div>
 
           <div className="action-row">
             <button className="btn-secondary" onClick={startGame}>
-              <RotateCcw size={18} /> 다시 하기
+              <RotateCcw size={16} /> 다시 하기
             </button>
             <button className="btn-primary" onClick={onBackToLobby}>
-              로비로 돌아가기 <ArrowRight size={18} />
+              로비로 돌아가기 <ArrowRight size={16} />
             </button>
           </div>
         </div>

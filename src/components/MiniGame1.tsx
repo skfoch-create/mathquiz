@@ -11,7 +11,7 @@ interface MiniGame1Props {
 }
 
 export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBackToLobby }) => {
-  const GAME_DURATION = 25; // 25초 제한시간
+  const GAME_DURATION = 25;
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -21,7 +21,6 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
   const [earnedGold, setEarnedGold] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
-  // 게임 시작
   const startGame = () => {
     setTimeLeft(GAME_DURATION);
     setScore(0);
@@ -32,7 +31,6 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
     setCurrentQuestion(generateSpeedTouchQuestion());
   };
 
-  // 타이머 카운트다운
   useEffect(() => {
     if (!isPlaying || timeLeft <= 0) return;
     const timer = setInterval(() => {
@@ -48,12 +46,9 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
     return () => clearInterval(timer);
   }, [isPlaying, timeLeft]);
 
-  // 게임 종료 처리
   const endGame = async () => {
     setIsPlaying(false);
     setIsGameOver(true);
-
-    // 맞춘 개수 * 5Gold + 콤보 보너스
     const gold = Math.max(10, score * 5);
     setEarnedGold(gold);
 
@@ -63,7 +58,6 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
     }
   };
 
-  // 정답 제출
   const handleSelectOption = (option: string) => {
     if (!currentQuestion || !isPlaying) return;
 
@@ -83,18 +77,20 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
   };
 
   return (
-    <div className="game-container animate-fade-in">
+    <div className="game-container animate-fade-in notranslate">
       <div className="game-header-card glass-card">
-        <div className="game-title-group">
-          <span className="game-badge badge-a">25초 타임어택</span>
-          <h2>⚡ 스피드탭</h2>
-          <p>25초 동안 수치와 똑같은 정답 카드를 번개처럼 빠르게 탭하세요!</p>
+        <div className="badge-wrapper">
+          <span className="mode-badge badge-a">⚡ 25초 타임어택</span>
         </div>
+        <h2>⚡ 스피드탭</h2>
+        <p>25초 동안 수치와 똑같은 정답 카드를 번개처럼 빠르게 탭하세요!</p>
 
         {!isPlaying && !isGameOver && (
-          <button className="btn-start-game shadow-btn" onClick={startGame}>
-            🚀 게임 시작 (25초 제한)
-          </button>
+          <div className="start-btn-wrapper">
+            <button className="btn-start-game" onClick={startGame}>
+              🚀 게임 시작 (25초)
+            </button>
+          </div>
         )}
       </div>
 
@@ -102,15 +98,15 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
         <div className="game-play-area">
           <div className="game-status-bar">
             <div className="timer-box">
-              <Timer size={22} className="text-yellow animate-spin-slow" />
-              <span className="time-value">{timeLeft}초</span>
+              <Timer size={20} className="text-yellow" />
+              <span className="time-value">{timeLeft}초 남음</span>
             </div>
             <div className="combo-box">
-              <Zap size={22} className="text-orange" />
+              <Zap size={20} className="text-orange" />
               <span>콤보: <b>{combo}</b></span>
             </div>
             <div className="score-box">
-              <span>점수: <b>{score}개</b></span>
+              <span>맞춘 개수: <b>{score}개</b></span>
             </div>
           </div>
 
@@ -149,17 +145,17 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
             <div className="stat-card highlight">
               <span className="stat-label">획득한 골드</span>
               <span className="stat-val text-yellow">
-                <Coins size={20} /> +{earnedGold} G
+                <Coins size={20} /> +{earnedGold} 골드
               </span>
             </div>
           </div>
 
           <div className="action-row">
             <button className="btn-secondary" onClick={startGame}>
-              <RotateCcw size={18} /> 다시 하기
+              <RotateCcw size={16} /> 다시 하기
             </button>
             <button className="btn-primary" onClick={onBackToLobby}>
-              로비로 돌아가기 <ArrowRight size={18} />
+              로비로 돌아가기 <ArrowRight size={16} />
             </button>
           </div>
         </div>

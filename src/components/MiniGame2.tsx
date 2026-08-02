@@ -76,18 +76,20 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
   };
 
   return (
-    <div className="game-container animate-fade-in">
+    <div className="game-container animate-fade-in notranslate">
       <div className="game-header-card glass-card">
-        <div className="game-title-group">
-          <span className="game-badge badge-b">25초 순발력</span>
-          <h2>⚖️ 길이비교</h2>
-          <p>지시어(더 긴 길이 / 더 짧은 길이)에 맞는 카드를 순발력 있게 고르세요!</p>
+        <div className="badge-wrapper">
+          <span className="mode-badge badge-b">⚖️ 25초 순발력</span>
         </div>
+        <h2>⚖️ 길이비교</h2>
+        <p>지시어(더 긴 길이 / 더 짧은 길이)에 맞는 카드를 순발력 있게 고르세요!</p>
 
         {!isPlaying && !isGameOver && (
-          <button className="btn-start-game shadow-btn" onClick={startGame}>
-            🚀 게임 시작 (25초 제한)
-          </button>
+          <div className="start-btn-wrapper">
+            <button className="btn-start-game" onClick={startGame}>
+              🚀 게임 시작 (25초)
+            </button>
+          </div>
         )}
       </div>
 
@@ -95,15 +97,15 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
         <div className="game-play-area">
           <div className="game-status-bar">
             <div className="timer-box">
-              <Timer size={22} className="text-yellow" />
-              <span className="time-value">{timeLeft}초</span>
+              <Timer size={20} className="text-yellow" />
+              <span className="time-value">{timeLeft}초 남음</span>
             </div>
             <div className="score-box">
               <span>맞춘 횟수: <b>{score}개</b></span>
             </div>
           </div>
 
-          <div className="instruction-banner">
+          <div className="instruction-banner glass-card">
             <Scale size={24} className="text-yellow" />
             <h2>
               {currentQuestion.targetType === 'longer' ? (
@@ -148,17 +150,17 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
             <div className="stat-card highlight">
               <span className="stat-label">획득한 골드</span>
               <span className="stat-val text-yellow">
-                <Coins size={20} /> +{earnedGold} G
+                <Coins size={20} /> +{earnedGold} 골드
               </span>
             </div>
           </div>
 
           <div className="action-row">
             <button className="btn-secondary" onClick={startGame}>
-              <RotateCcw size={18} /> 다시 하기
+              <RotateCcw size={16} /> 다시 하기
             </button>
             <button className="btn-primary" onClick={onBackToLobby}>
-              로비로 돌아가기 <ArrowRight size={18} />
+              로비로 돌아가기 <ArrowRight size={16} />
             </button>
           </div>
         </div>
