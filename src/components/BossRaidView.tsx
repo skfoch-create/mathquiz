@@ -43,30 +43,45 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
     setIsPlaying(true);
   };
 
+  // 60초 타이머 (게임 중일 때만 동작)
   useEffect(() => {
-    if (!isPlaying || timeLeft <= 0) return;
+    if (!isPlaying || isGameOver) return;
+    
+    if (timeLeft <= 0) {
+      finishRaid(correctCount, true);
+      return;
+    }
+
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          evaluateFinalResult(correctCount, true);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
+
     return () => clearInterval(timer);
-  }, [isPlaying, timeLeft, correctCount]);
+  }, [isPlaying, isGameOver, timeLeft]);
+
+  // 보스전 종료 및 승리/패배 최종 처리
+  const finishRaid = async (finalCount: number, isTimeOut: boolean) => {
+    setIsPlaying(false);
+    setIsGameOver(true);
+
+    const victory = !isTimeOut && finalCount === 5;
+    setIsSuccess(victory);
+
+    if (victory && user) {
+      const updated = await updateUserStats(user, 300, 0, 1);
+      onUpdateUser(updated);
+    }
+  };
 
   const handleAnswerSelect = (selectedOptionIdx: number) => {
-    if (!isPlaying || !questions[currentIdx]) return;
+    if (!isPlaying || isGameOver || !questions[currentIdx]) return;
 
     const currentQ = questions[currentIdx];
     const isCorrect = selectedOptionIdx === currentQ.correctAnswerIndex;
-    const newCorrectCount = isCorrect ? correctCount + 1 : correctCount;
+    const nextCount = isCorrect ? correctCount + 1 : correctCount;
 
     if (isCorrect) {
-      setCorrectCount(newCorrectCount);
+      setCorrectCount(nextCount);
       setFeedbackMsg({ text: '⭕ 정답입니다!', isCorrect: true });
     } else {
       setFeedbackMsg({ text: `❌ 아쉬워요! 정답: ${currentQ.options[currentQ.correctAnswerIndex]}`, isCorrect: false });
@@ -77,24 +92,9 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
       if (currentIdx + 1 < questions.length) {
         setCurrentIdx((prev) => prev + 1);
       } else {
-        evaluateFinalResult(newCorrectCount, false);
+        finishRaid(nextCount, false);
       }
-    }, 600);
-  };
-
-  const evaluateFinalResult = async (finalCorrectCount: number, isTimeOut: boolean) => {
-    setIsPlaying(false);
-    setIsGameOver(true);
-
-    if (!isTimeOut && finalCorrectCount === 5) {
-      setIsSuccess(true);
-      if (user) {
-        const updated = await updateUserStats(user, 300, 0, 1);
-        onUpdateUser(updated);
-      }
-    } else {
-      setIsSuccess(false);
-    }
+    }, 500);
   };
 
   const currentQ = questions[currentIdx];
@@ -151,7 +151,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
             <h1 style={{ fontSize: '42px', fontWeight: '900', color: '#1e1b4b', margin: '24px 0 36px' }}>{currentQ.questionText}</h1>
 
             {feedbackMsg && (
-              <div style={{ padding: '12px 24px', borderRadius: '16px', background: feedbackMsg.isCorrect ? '#dcfce7' : '#ffe4e6', color: feedbackMsg.isCorrect ? '#15803d' : '#e11d48', fontWeight: '900', fontSize: '20px', marginBottom: '20px', animation: 'pop 0.2s ease-out' }}>
+              <div style={{ padding: '12px 24px', borderRadius: '16px', background: feedbackMsg.isCorrect ? '#dcfce7' : '#ffe4e6', color: feedbackMsg.isCorrect ? '#15803d' : '#e11d48', fontWeight: '900', fontSize: '20px', marginBottom: '20px' }}>
                 {feedbackMsg.text}
               </div>
             )}
@@ -189,16 +189,18 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
           {isSuccess ? (
             <div>
               <div style={{ fontSize: '72px', marginBottom: '12px' }}>🏆</div>
-              <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#15803d' }}>VICTORY! 대마왕을 물리쳤습니다!</h1>
-              <p style={{ color: '#64748b', fontSize: '17px', margin: '8px 0 24px', fontWeight: '800' }}>5문제를 완벽하게 풀어 상금 300 골드와 명예 승리를 획득했습니다.</p>
+              <h1 style={{ fontSize: '34px', fontWeight: '900', color: '#15803d' }}>VICTORY! 대마왕을 물리쳤습니다!</h1>
+              <p style={{ color: '#64748b', fontSize: '18px', margin: '12px 0 28px', fontWeight: '800' }}>
+                축하합니다! 5문제를 모두(5/5) 완벽하게 풀어 <b>+300 골드</b> 보상을 획득했습니다!
+              </p>
             </div>
           ) : (
             <div>
               <div style={{ fontSize: '72px', marginBottom: '12px' }}>💀</div>
               <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#b91c1c' }}>GAME OVER... 보스 공략 실패!</h1>
-              <p style={{ color: '#64748b', fontSize: '17px', margin: '8px 0 24px', fontWeight: '800' }}>
+              <p style={{ color: '#64748b', fontSize: '18px', margin: '12px 0 28px', fontWeight: '800' }}>
                 5문제 중 <b>{correctCount}문제</b>를 맞추셨습니다.<br />
-                5문제를 모두(5/5) 맞추어야 보스를 격파할 수 있습니다! 다시 도전해보세요.
+                보스를 무찌르려면 5문제를 모두(5/5) 맞추어야 합니다. 미니게임에서 연습 후 다시 도전해 보세요!
               </p>
             </div>
           )}
