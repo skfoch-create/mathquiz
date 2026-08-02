@@ -255,3 +255,5 @@ export function generateBossQuiz(): BossQuizQuestion[] {
 
   return questions;
 }
+
+export const generateBossQuestions = generateBossQuiz;
