@@ -63,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({ user, currentTab, onSelectTab, o
           {user ? (
             <div className="user-info-chip">
               <div className="gold-badge">
-                💰 {user.gold.toLocaleString()} G
+                💰 {user.gold.toLocaleString()} 골드
               </div>
               <div className="user-name-tag" onClick={onOpenAuth} title="프로필 변경">
                 <UserCheck size={15} />

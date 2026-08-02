@@ -383,6 +383,130 @@ body {
   color: var(--text-sub);
 }
 
+/* Beautiful Leaderboard Styles */
+.leaderboard-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.leaderboard-header {
+  padding: 24px 32px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.trophy-badge {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-tabs {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.rank-tab-btn {
+  flex: 1;
+  padding: 14px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  color: var(--text-sub);
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.rank-tab-btn.active {
+  background: #ffffff;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.15);
+}
+
+.rank-list {
+  padding: 20px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: var(--radius-lg);
+}
+
+.rank-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  border: 2px solid #f1f5f9;
+}
+
+.rank-1 { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-color: #fde047; }
+.rank-2 { background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-color: #cbd5e1; }
+.rank-3 { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color: #fdba74; }
+
+.crown-gold { color: #d97706; }
+.crown-silver { color: #64748b; }
+.crown-bronze { color: #c2410c; }
+
+.rank-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rank-number {
+  font-weight: 900;
+  font-size: 18px;
+  width: 70px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #1e1b4b;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.score-chip {
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.empty-rank {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-sub);
+  font-weight: 700;
+}
+
 /* Beautiful Auth Modal UI */
 .modal-overlay {
   position: fixed;
@@ -535,10 +659,13 @@ body {
 }
 
 .cute-btn {
-  padding: 16px;
-  font-size: 17px;
-  font-weight: 900;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 800;
   border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .btn-primary {
