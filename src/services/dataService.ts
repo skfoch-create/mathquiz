@@ -14,7 +14,6 @@ export function saveLocalUser(user: UserProfile) {
   registerToSharedPool(user);
 }
 
-// 공유 도전자 풀 등록 (로컬 스토리지 & 세션 네트워크 공유)
 function registerToSharedPool(user: UserProfile) {
   try {
     const data = localStorage.getItem(SHARED_LEADERBOARD_KEY);
@@ -26,6 +25,7 @@ function registerToSharedPool(user: UserProfile) {
       gold: user.gold,
       totalMiniGameClears: user.totalMiniGameClears,
       bossVictories: user.bossVictories,
+      fastestBossClearTime: user.fastestBossClearTime,
       authProvider: user.authProvider,
     };
 
@@ -65,7 +65,7 @@ export async function getOrCreateUser(uid: string, displayName: string, authProv
         return initialUser;
       }
     } catch (e) {
-      console.warn('Firestore User Sync Notice (Checking security rules):', e);
+      console.warn('Firestore User Sync Notice:', e);
     }
   }
 
@@ -77,12 +77,26 @@ export async function getOrCreateUser(uid: string, displayName: string, authProv
   return localUser;
 }
 
-export async function updateUserStats(user: UserProfile, goldDelta: number, clearDelta: number = 0, bossVictoryDelta: number = 0): Promise<UserProfile> {
+export async function updateUserStats(
+  user: UserProfile,
+  goldDelta: number,
+  clearDelta: number = 0,
+  bossVictoryDelta: number = 0,
+  clearTimeSeconds?: number
+): Promise<UserProfile> {
+  let newFastestTime = user.fastestBossClearTime;
+  if (clearTimeSeconds !== undefined && clearTimeSeconds > 0) {
+    if (!newFastestTime || clearTimeSeconds < newFastestTime) {
+      newFastestTime = clearTimeSeconds;
+    }
+  }
+
   const updatedUser: UserProfile = {
     ...user,
     gold: Math.max(0, user.gold + goldDelta),
     totalMiniGameClears: user.totalMiniGameClears + clearDelta,
     bossVictories: user.bossVictories + bossVictoryDelta,
+    fastestBossClearTime: newFastestTime,
   };
 
   saveLocalUser(updatedUser);
@@ -99,7 +113,7 @@ export async function updateUserStats(user: UserProfile, goldDelta: number, clea
   return updatedUser;
 }
 
-export async function recordBossAttempt(user: UserProfile, correctCount: number, isVictory: boolean): Promise<BossRecord> {
+export async function recordBossAttempt(user: UserProfile, correctCount: number, isVictory: boolean, clearTimeSeconds?: number): Promise<BossRecord> {
   const newRecord: BossRecord = {
     id: 'boss_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5),
     uid: user.uid,
@@ -107,6 +121,7 @@ export async function recordBossAttempt(user: UserProfile, correctCount: number,
     attemptNumber: 1,
     correctCount,
     isVictory,
+    clearTimeSeconds,
     timestamp: Date.now(),
   };
 
@@ -121,11 +136,14 @@ export async function recordBossAttempt(user: UserProfile, correctCount: number,
   return newRecord;
 }
 
-// 4. 명예의 전당 (온라인 DB + 공유 릴레이 풀 실시간 수집)
-export async function getLeaderboard(): Promise<{ topGold: LeaderboardEntry[]; topClears: LeaderboardEntry[] }> {
+// 4. 명예의 전당 (골드, 클리어 횟수, 보스 최단 클리어 스피드 3대 랭킹 수집)
+export async function getLeaderboard(): Promise<{
+  topGold: LeaderboardEntry[];
+  topClears: LeaderboardEntry[];
+  topBossSpeed: LeaderboardEntry[];
+}> {
   const entryMap = new Map<string, LeaderboardEntry>();
 
-  // 1. 온라인 Firestore 실시간 다중 참여자 수집
   if (isFirebaseConfigured && db) {
     try {
       const querySnap = await getDocs(collection(db, 'users'));
@@ -138,16 +156,16 @@ export async function getLeaderboard(): Promise<{ topGold: LeaderboardEntry[]; t
             gold: u.gold || 0,
             totalMiniGameClears: u.totalMiniGameClears || 0,
             bossVictories: u.bossVictories || 0,
+            fastestBossClearTime: u.fastestBossClearTime,
             authProvider: u.authProvider || 'anonymous',
           });
         }
       });
     } catch (e) {
-      console.warn('Firestore leaderboard permissions check notice:', e);
+      console.warn('Firestore leaderboard notice:', e);
     }
   }
 
-  // 2. 브라우저 본인 정보 릴레이 합체
   const localUser = getLocalUser();
   if (localUser) {
     entryMap.set(localUser.uid, {
@@ -156,6 +174,7 @@ export async function getLeaderboard(): Promise<{ topGold: LeaderboardEntry[]; t
       gold: localUser.gold,
       totalMiniGameClears: localUser.totalMiniGameClears,
       bossVictories: localUser.bossVictories,
+      fastestBossClearTime: localUser.fastestBossClearTime,
       authProvider: localUser.authProvider,
     });
   }
@@ -164,6 +183,12 @@ export async function getLeaderboard(): Promise<{ topGold: LeaderboardEntry[]; t
 
   const topGold = [...entries].sort((a, b) => b.gold - a.gold).slice(0, 10);
   const topClears = [...entries].sort((a, b) => b.totalMiniGameClears - a.totalMiniGameClears).slice(0, 10);
+  
+  // 보스 최단 클리어 스피드어택 랭킹 (기록이 존재하는 유저 대상 빠를수록 상위)
+  const topBossSpeed = [...entries]
+    .filter(e => e.fastestBossClearTime !== undefined && e.fastestBossClearTime > 0)
+    .sort((a, b) => (a.fastestBossClearTime || 999) - (b.fastestBossClearTime || 999))
+    .slice(0, 10);
 
-  return { topGold, topClears };
+  return { topGold, topClears, topBossSpeed };
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Swords, Timer, Shield, Trophy, RotateCcw, ArrowRight, Heart } from 'lucide-react';
+import { Swords, Timer, Shield, Trophy, RotateCcw, ArrowRight } from 'lucide-react';
 import { generateBossQuestions } from '../utils/mathGenerator';
 import type { BossQuestion, UserProfile } from '../types';
 import { updateUserStats } from '../services/dataService';
@@ -23,6 +23,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [clearTimeRecord, setClearTimeRecord] = useState<number | null>(null);
   const [bossHitEffect, setBossHitEffect] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; isCorrect: boolean } | null>(null);
 
@@ -43,6 +44,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
     setTimeLeft(GAME_DURATION);
     setIsGameOver(false);
     setIsSuccess(false);
+    setClearTimeRecord(null);
     setBossHitEffect(false);
     setFeedbackMsg(null);
     setIsPlaying(true);
@@ -53,7 +55,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
     if (!isPlaying || isGameOver) return;
     
     if (timeLeft <= 0) {
-      finishRaid(correctCount, true);
+      finishRaid(correctCount, true, GAME_DURATION);
       return;
     }
 
@@ -64,17 +66,20 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
     return () => clearInterval(timer);
   }, [isPlaying, isGameOver, timeLeft]);
 
-  // 보스전 최종 완료 처리
-  const finishRaid = async (finalCount: number, isTimeOut: boolean) => {
+  // 보스전 최종 완료 및 클리어 스피드 소요 시간 기록
+  const finishRaid = async (finalCount: number, isTimeOut: boolean, elapsedSeconds: number) => {
     setIsPlaying(false);
     setIsGameOver(true);
 
     const victory = !isTimeOut && finalCount === MAX_BOSS_HP;
     setIsSuccess(victory);
 
-    if (victory && user) {
-      const updated = await updateUserStats(user, 300, 0, 1);
-      onUpdateUser(updated);
+    if (victory) {
+      setClearTimeRecord(elapsedSeconds);
+      if (user) {
+        const updated = await updateUserStats(user, 300, 0, 1, elapsedSeconds);
+        onUpdateUser(updated);
+      }
     }
   };
 
@@ -83,6 +88,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
 
     const currentQ = questions[currentIdx];
     const isCorrect = selectedOptionIdx === currentQ.correctAnswerIndex;
+    const elapsedSeconds = GAME_DURATION - timeLeft;
 
     if (isCorrect) {
       const nextCount = correctCount + 1;
@@ -100,7 +106,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
         if (currentIdx + 1 < questions.length) {
           setCurrentIdx((prev) => prev + 1);
         } else {
-          finishRaid(nextCount, false);
+          finishRaid(nextCount, false, Math.max(1, elapsedSeconds));
         }
       }, 700);
     } else {
@@ -111,7 +117,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
         if (currentIdx + 1 < questions.length) {
           setCurrentIdx((prev) => prev + 1);
         } else {
-          finishRaid(correctCount, false);
+          finishRaid(correctCount, false, elapsedSeconds);
         }
       }, 700);
     }
@@ -128,7 +134,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
           <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#881337', marginBottom: '8px' }}>최종 대결! 귀여운 대마왕 '길이마왕 킹슬라임'</h1>
           <p style={{ color: '#64748b', fontSize: '16px', margin: '8px 0 24px', fontWeight: '800' }}>
             퀴즈 <b>5문항</b>을 풀어 <b>보스의 HP(5/5)를 0으로 깎아 격파</b>하세요!<br />
-            정답을 맞출 때마다 보스가 타격을 입고 HP가 깎여 나갑니다!
+            빠르게 클리어할수록 <b>⚡ 명예의 전당 최단 클리어 스피드 랭킹</b>에 등재됩니다!
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', margin: '24px 0' }}>
@@ -157,7 +163,6 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
 
       {isPlaying && currentQ && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* 상단 타이머 및 관문 상태 */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '16px 28px', borderRadius: '24px', border: '3px solid #fecdd3', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
             <div style={{ fontSize: '18px', fontWeight: '900', color: '#9f1239' }}>
               <span>👾 관문 ({currentIdx + 1} / 5)</span>
@@ -168,9 +173,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
             </div>
           </div>
 
-          {/* 👹 귀여운 보스 캐릭터 & 실시간 HP 체력바 스테이지 */}
           <div style={{ padding: '24px 32px', background: 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%)', borderRadius: '32px', border: '3px solid #fda4af', boxShadow: '0 15px 35px rgba(244, 63, 94, 0.15)', textAlign: 'center', position: 'relative' }}>
-            {/* 귀여운 보스 캐릭터 (피격 시 쿵 이펙트) */}
             <div
               style={{
                 fontSize: '88px',
@@ -184,7 +187,6 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
             </div>
             <h3 style={{ fontSize: '24px', fontWeight: '900', color: '#881337', margin: '0 0 12px' }}>대마왕 길이마왕 킹슬라임</h3>
 
-            {/* 실시간 HP 체력바 */}
             <div style={{ maxWidth: '420px', margin: '0 auto', background: '#ffffff', padding: '6px', borderRadius: '20px', border: '2px solid #fecdd3', boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1)' }}>
               <div style={{ height: '22px', background: 'linear-gradient(90deg, #ef4444, #f43f5e)', width: `${hpPercentage}%`, borderRadius: '16px', transition: 'width 0.4s ease-in-out', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontSize: '13px', fontWeight: '900' }}>
                 {bossHp} / {MAX_BOSS_HP} HP
@@ -192,7 +194,6 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
             </div>
           </div>
 
-          {/* 퀴즈 지문 및 4지선다 카드 */}
           <div style={{ padding: '36px 32px', textAlign: 'center', background: '#ffffff', border: '3px solid #e0e7ff', borderRadius: '32px', boxShadow: '0 20px 40px rgba(99, 102, 241, 0.12)' }}>
             <span style={{ background: '#ffe4e6', color: '#e11d48', padding: '6px 18px', borderRadius: '20px', fontSize: '15px', fontWeight: '900' }}>관문 {currentIdx + 1} 퀴즈 공격</span>
             <h1 style={{ fontSize: '38px', fontWeight: '900', color: '#1e1b4b', margin: '20px 0 28px' }}>{currentQ.questionText}</h1>
@@ -236,18 +237,21 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
           {isSuccess ? (
             <div>
               <div style={{ fontSize: '80px', marginBottom: '12px' }}>🏆</div>
-              <h1 style={{ fontSize: '34px', fontWeight: '900', color: '#15803d' }}>VICTORY! 보스 격파 성공!</h1>
-              <p style={{ color: '#64748b', fontSize: '18px', margin: '12px 0 28px', fontWeight: '800' }}>
-                축하합니다! 보스의 HP를 모두(5/5) 깎아 격파하여 <b>+300 골드</b> 상금과 승리 업적을 획득했습니다!
+              <h1 style={{ fontSize: '34px', fontWeight: '900', color: '#15803d' }}>VICTORY! 보스 스피드 격파 성공!</h1>
+              <p style={{ color: '#64748b', fontSize: '18px', margin: '12px 0 16px', fontWeight: '800' }}>
+                축하합니다! <b>{clearTimeRecord}초 만에 보스를 격파</b>하고 <b>+300 골드</b>와 ⚡ 최단 클리어 기록을 획득했습니다!
               </p>
+              <div style={{ display: 'inline-block', background: '#fef3c7', color: '#b45309', padding: '10px 24px', borderRadius: '20px', fontWeight: '900', fontSize: '17px', border: '2px solid #fde047', marginBottom: '20px' }}>
+                ⚡ 이번 판 격파 기록: {clearTimeRecord} 초 만에 클리어!
+              </div>
             </div>
           ) : (
             <div>
               <div style={{ fontSize: '80px', marginBottom: '12px' }}>💀</div>
               <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#b91c1c' }}>GAME OVER... 보스 공략 실패!</h1>
               <p style={{ color: '#64748b', fontSize: '18px', margin: '12px 0 28px', fontWeight: '800' }}>
-                보스에게 <b>{correctCount}번의 타격</b>을 주었습니다. (남은 보스 HP: {bossHp})<br />
-                보스를 무찌르려면 5문제를 모두 맞춰 HP를 0으로 깎아야 합니다. 미니게임에서 연습 후 다시 도전해 보세요!
+                보스에게 <b>{correctCount}번의 타격</b>을 주었습니다.<br />
+                보스를 무찌르려면 5문제를 모두 맞춰 HP를 0으로 깎아야 합니다!
               </p>
             </div>
           )}

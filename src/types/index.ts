@@ -7,6 +7,7 @@ export interface UserProfile {
   gold: number;
   totalMiniGameClears: number;
   bossVictories: number;
+  fastestBossClearTime?: number; // 보스전 최단 클리어 시간 (초)
   createdAt: number;
 }
 
@@ -43,7 +44,7 @@ export interface TargetGaugeQuestion {
   availableBlocks: { id: string; text: string; valueInMm: number }[];
 }
 
-// 보스전 퀴즈 문제 (4지선다 5문항) - BossQuestion 통일
+// 보스전 퀴즈 문제 (4지선다 5문항)
 export interface BossQuestion {
   id: number;
   questionText: string;
@@ -59,6 +60,7 @@ export interface BossRecord {
   attemptNumber: number;
   correctCount: number;
   isVictory: boolean;
+  clearTimeSeconds?: number;
   timestamp: number;
 }
 
@@ -68,5 +70,6 @@ export interface LeaderboardEntry {
   gold: number;
   totalMiniGameClears: number;
   bossVictories: number;
+  fastestBossClearTime?: number;
   authProvider: AuthProviderType;
 }
