@@ -210,7 +210,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
               <RotateCcw size={18} /> 재도전하기 (100 골드)
             </button>
             <button onClick={onBackToLobby} style={{ padding: '16px 28px', background: '#4f46e5', color: '#ffffff', border: 'none', borderRadius: '18px', fontWeight: '900', fontSize: '17px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              로비로 돌아가기 <ArrowRight size={18} />
+              홈으로 돌아가기 <ArrowRight size={18} />
             </button>
           </div>
         </div>
