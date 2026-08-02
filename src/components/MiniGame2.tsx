@@ -60,7 +60,6 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
   const handleSelectSide = (side: 'left' | 'right') => {
     if (!currentQuestion || !isPlaying) return;
 
-    // 시소 쿵 기울어짐 모션 시각화
     setSeesawTilt(side);
 
     const isLeftLonger = currentQuestion.leftValueInMm > currentQuestion.rightValueInMm;
@@ -77,17 +76,17 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
       setScore((prev) => prev + 1);
     }
 
-    // 충분한 800ms 모션 관람 후 다음 문제 전환
     setTimeout(() => {
       setSeesawTilt('center');
       setCurrentQuestion(generateSizeCompareQuestion());
     }, 700);
   };
 
-  const getSeesawRotate = () => {
-    if (seesawTilt === 'left') return 'rotate(-24deg)';
-    if (seesawTilt === 'right') return 'rotate(24deg)';
-    return 'rotate(0deg)';
+  // 통째로 묶인 진짜 시소의 회전 각도
+  const getSeesawBoardRotate = () => {
+    if (seesawTilt === 'left') return 'rotate(-10deg) translateY(10px)';
+    if (seesawTilt === 'right') return 'rotate(10deg) translateY(10px)';
+    return 'rotate(0deg) translateY(0px)';
   };
 
   return (
@@ -96,7 +95,7 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
         <div>
           <span style={{ background: '#ffe4e6', color: '#e11d48', padding: '6px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: '900' }}>⚖️ 25초 순발력</span>
         </div>
-        <h2 style={{ fontSize: '28px', fontWeight: '900', color: '#881337', margin: 0 }}>⚖️ 길이비교</h2>
+        <h2 style={{ fontSize: '28px', fontWeight: '900', color: '#881337', margin: 0 }}>⚖️ 길이비교 (진짜 시소 대결)</h2>
         <p style={{ fontSize: '16px', color: '#64748b', margin: 0, fontWeight: '800' }}>지시어(더 긴 길이 / 더 짧은 길이)에 맞는 카드를 시소를 보며 순발력 있게 고르세요!</p>
 
         {!isPlaying && !isGameOver && (
@@ -120,7 +119,7 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
             </div>
           </div>
 
-          <div style={{ textAlign: 'center', padding: '24px', background: '#ffffff', borderRadius: '28px', border: '3px solid #fecdd3', boxShadow: '0 15px 35px rgba(244, 63, 94, 0.1)' }}>
+          <div style={{ textAlign: 'center', padding: '20px', background: '#ffffff', borderRadius: '28px', border: '3px solid #fecdd3', boxShadow: '0 15px 35px rgba(244, 63, 94, 0.1)' }}>
             <h2 style={{ fontSize: '28px', fontWeight: '900' }}>
               {currentQuestion.targetType === 'longer' ? (
                 <span style={{ color: '#e11d48' }}>🔥 더 긴 길이를 고르세요!</span>
@@ -130,69 +129,71 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
             </h2>
           </div>
 
-          {/* 3D 역동적 시소 대결 공간 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative' }}>
-            {/* 왼쪽 카드 */}
-            <button
-              onClick={() => handleSelectSide('left')}
+          {/* 🎡 놀이터 진짜 시소 스테이지 (양 끝에 보기가 탑재된 통판 시소) */}
+          <div style={{ padding: '40px 20px 20px', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* 회전하는 긴 시소 판자 + 양 끝 보기 카드 */}
+            <div
               style={{
-                flex: 1,
-                padding: '48px 24px',
-                textAlign: 'center',
-                background: '#ffffff',
-                border: seesawTilt === 'left' ? '4px solid #e11d48' : '3px solid #cbd5e1',
-                borderRadius: '28px',
-                boxShadow: '0 12px 28px rgba(0,0,0,0.08)',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                transform: seesawTilt === 'left' ? 'translateY(24px) scale(1.03)' : 'translateY(0)'
+                width: '100%',
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'space-between',
+                gap: '24px',
+                transform: getSeesawBoardRotate(),
+                transformOrigin: '50% 100%',
+                transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                paddingBottom: '16px',
+                borderBottom: '18px solid #d97706',
+                borderRadius: '12px'
               }}
             >
-              <div style={{ fontSize: '15px', color: '#64748b', fontWeight: '900', marginBottom: '8px' }}>LEFT CARD</div>
-              <div style={{ fontSize: '38px', fontWeight: '900', color: '#1e1b4b' }}>{currentQuestion.leftText}</div>
-            </button>
-
-            {/* 시소 판자 & 받침대 3D 비주얼 센터 */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minWidth: '120px' }}>
-              <div
+              {/* 왼쪽 시소 탑승 보기 카드 */}
+              <button
+                onClick={() => handleSelectSide('left')}
                 style={{
-                  transform: getSeesawRotate(),
-                  transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
-                  padding: '12px 20px',
-                  borderRadius: '24px',
-                  border: '3px solid #f59e0b',
-                  boxShadow: '0 10px 25px rgba(245, 158, 11, 0.3)'
+                  flex: 1,
+                  padding: '40px 20px',
+                  textAlign: 'center',
+                  background: '#ffffff',
+                  border: seesawTilt === 'left' ? '4px solid #e11d48' : '3px solid #cbd5e1',
+                  borderRadius: '28px',
+                  boxShadow: '0 12px 28px rgba(0,0,0,0.1)',
+                  cursor: 'pointer',
+                  marginBottom: '-16px'
                 }}
               >
-                <Scale size={32} style={{ color: '#d97706' }} />
-                <span style={{ fontSize: '20px', fontWeight: '900', color: '#92400e', whiteSpace: 'nowrap' }}>시소 쿵!</span>
+                <div style={{ fontSize: '14px', color: '#64748b', fontWeight: '900', marginBottom: '8px' }}>LEFT</div>
+                <div style={{ fontSize: '36px', fontWeight: '900', color: '#1e1b4b' }}>{currentQuestion.leftText}</div>
+              </button>
+
+              {/* 시소 중심 뱃지 */}
+              <div style={{ background: '#fef3c7', padding: '10px 18px', borderRadius: '20px', border: '3px solid #f59e0b', marginBottom: '-28px', zIndex: 10, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Scale size={26} style={{ color: '#d97706' }} />
+                <span style={{ fontSize: '18px', fontWeight: '900', color: '#92400e', whiteSpace: 'nowrap' }}>시소 쿵!</span>
               </div>
-              <div style={{ width: '0', height: '0', borderLeft: '16px solid transparent', borderRight: '16px solid transparent', borderBottom: '24px solid #d97706', marginTop: '6px' }} />
+
+              {/* 오른쪽 시소 탑승 보기 카드 */}
+              <button
+                onClick={() => handleSelectSide('right')}
+                style={{
+                  flex: 1,
+                  padding: '40px 20px',
+                  textAlign: 'center',
+                  background: '#ffffff',
+                  border: seesawTilt === 'right' ? '4px solid #e11d48' : '3px solid #cbd5e1',
+                  borderRadius: '28px',
+                  boxShadow: '0 12px 28px rgba(0,0,0,0.1)',
+                  cursor: 'pointer',
+                  marginBottom: '-16px'
+                }}
+              >
+                <div style={{ fontSize: '14px', color: '#64748b', fontWeight: '900', marginBottom: '8px' }}>RIGHT</div>
+                <div style={{ fontSize: '36px', fontWeight: '900', color: '#1e1b4b' }}>{currentQuestion.rightText}</div>
+              </button>
             </div>
 
-            {/* 오른쪽 카드 */}
-            <button
-              onClick={() => handleSelectSide('right')}
-              style={{
-                flex: 1,
-                padding: '48px 24px',
-                textAlign: 'center',
-                background: '#ffffff',
-                border: seesawTilt === 'right' ? '4px solid #e11d48' : '3px solid #cbd5e1',
-                borderRadius: '28px',
-                boxShadow: '0 12px 28px rgba(0,0,0,0.08)',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                transform: seesawTilt === 'right' ? 'translateY(24px) scale(1.03)' : 'translateY(0)'
-              }}
-            >
-              <div style={{ fontSize: '15px', color: '#64748b', fontWeight: '900', marginBottom: '8px' }}>RIGHT CARD</div>
-              <div style={{ fontSize: '38px', fontWeight: '900', color: '#1e1b4b' }}>{currentQuestion.rightText}</div>
-            </button>
+            {/* 시소 중앙 하단 3D 삼각 받침대 */}
+            <div style={{ width: '0', height: '0', borderLeft: '32px solid transparent', borderRight: '32px solid transparent', borderBottom: '48px solid #b45309', marginTop: '-4px' }} />
           </div>
         </div>
       )}
