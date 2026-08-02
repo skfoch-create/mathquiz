@@ -32,7 +32,16 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="app-layout">
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #eef2ff 0%, #e0e7ff 40%, #fae8ff 80%, #fff1f2 100%)',
+        fontFamily: "'Nanum Square Round', 'Jua', sans-serif",
+        color: '#0f172a',
+        paddingBottom: '40px'
+      }}
+      className="notranslate"
+    >
       {/* 상단 헤더 */}
       <Header
         user={user}
@@ -42,7 +51,7 @@ export const App: React.FC = () => {
       />
 
       {/* 메인 콘텐츠 영역 */}
-      <main className="main-content">
+      <main style={{ maxWidth: '1040px', width: '100%', margin: '0 auto', padding: '0 20px' }}>
         {currentTab === 'lobby' && (
           <LobbyView
             user={user}
@@ -80,7 +89,6 @@ export const App: React.FC = () => {
             user={user}
             onUpdateUser={handleUpdateUser}
             onBackToLobby={() => setCurrentTab('lobby')}
-            onOpenAuth={() => setIsAuthOpen(true)}
           />
         )}
 
@@ -95,7 +103,7 @@ export const App: React.FC = () => {
       />
 
       {/* 푸터 */}
-      <footer className="main-footer">
+      <footer style={{ textAlign: 'center', marginTop: '40px', color: '#64748b', fontSize: '14px', fontWeight: '800' }}>
         <p>© 2026 초등 수학 길이 단위(mm, cm, m, km) 변환 학습 게이미피케이션 앱</p>
       </footer>
     </div>
