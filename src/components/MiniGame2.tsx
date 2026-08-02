@@ -60,7 +60,7 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
   const handleSelectSide = (side: 'left' | 'right') => {
     if (!currentQuestion || !isPlaying) return;
 
-    // 시소 기울어짐 동작
+    // 시소 쿵 기울어짐 모션 시각화
     setSeesawTilt(side);
 
     const isLeftLonger = currentQuestion.leftValueInMm > currentQuestion.rightValueInMm;
@@ -77,21 +77,21 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
       setScore((prev) => prev + 1);
     }
 
+    // 충분한 800ms 모션 관람 후 다음 문제 전환
     setTimeout(() => {
       setSeesawTilt('center');
       setCurrentQuestion(generateSizeCompareQuestion());
-    }, 350);
+    }, 700);
   };
 
-  // 시소 회전 각도 계산
   const getSeesawRotate = () => {
-    if (seesawTilt === 'left') return 'rotate(-14deg)';
-    if (seesawTilt === 'right') return 'rotate(14deg)';
+    if (seesawTilt === 'left') return 'rotate(-24deg)';
+    if (seesawTilt === 'right') return 'rotate(24deg)';
     return 'rotate(0deg)';
   };
 
   return (
-    <div className="game-container notranslate" style={{ maxWidth: '820px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="game-container notranslate" style={{ maxWidth: '840px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ padding: '28px 36px', background: '#ffffff', borderRadius: '28px', border: '3px solid #fecdd3', boxShadow: '0 15px 35px -10px rgba(244, 63, 94, 0.15)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div>
           <span style={{ background: '#ffe4e6', color: '#e11d48', padding: '6px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: '900' }}>⚖️ 25초 순발력</span>
@@ -109,7 +109,7 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
       </div>
 
       {isPlaying && currentQuestion && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', background: '#ffffff', padding: '18px 28px', borderRadius: '24px', border: '3px solid #fecdd3', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#b45309', background: '#fef3c7', padding: '8px 20px', borderRadius: '20px', fontWeight: '900', fontSize: '18px' }}>
               <Timer size={22} />
@@ -130,8 +130,9 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
             </h2>
           </div>
 
-          {/* 3D 동적 시소 대결 모듈 */}
+          {/* 3D 역동적 시소 대결 공간 */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative' }}>
+            {/* 왼쪽 카드 */}
             <button
               onClick={() => handleSelectSide('left')}
               style={{
@@ -143,35 +144,37 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
                 borderRadius: '28px',
                 boxShadow: '0 12px 28px rgba(0,0,0,0.08)',
                 cursor: 'pointer',
-                transition: 'transform 0.2s ease, border-color 0.2s ease',
-                transform: seesawTilt === 'left' ? 'translateY(12px)' : 'translateY(0)'
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                transform: seesawTilt === 'left' ? 'translateY(24px) scale(1.03)' : 'translateY(0)'
               }}
             >
               <div style={{ fontSize: '15px', color: '#64748b', fontWeight: '900', marginBottom: '8px' }}>LEFT CARD</div>
               <div style={{ fontSize: '38px', fontWeight: '900', color: '#1e1b4b' }}>{currentQuestion.leftText}</div>
             </button>
 
-            {/* 움직이는 시소 (See-Saw) 아이콘 모듈 */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            {/* 시소 판자 & 받침대 3D 비주얼 센터 */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minWidth: '120px' }}>
               <div
                 style={{
                   transform: getSeesawRotate(),
-                  transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  background: '#fef3c7',
-                  padding: '12px 18px',
+                  gap: '6px',
+                  background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
+                  padding: '12px 20px',
                   borderRadius: '24px',
-                  border: '3px solid #fde047',
-                  boxShadow: '0 8px 20px rgba(245, 158, 11, 0.25)'
+                  border: '3px solid #f59e0b',
+                  boxShadow: '0 10px 25px rgba(245, 158, 11, 0.3)'
                 }}
               >
                 <Scale size={32} style={{ color: '#d97706' }} />
-                <span style={{ fontSize: '20px', fontWeight: '900', color: '#b45309' }}>시소 VS</span>
+                <span style={{ fontSize: '20px', fontWeight: '900', color: '#92400e', whiteSpace: 'nowrap' }}>시소 쿵!</span>
               </div>
+              <div style={{ width: '0', height: '0', borderLeft: '16px solid transparent', borderRight: '16px solid transparent', borderBottom: '24px solid #d97706', marginTop: '6px' }} />
             </div>
 
+            {/* 오른쪽 카드 */}
             <button
               onClick={() => handleSelectSide('right')}
               style={{
@@ -183,8 +186,8 @@ export const MiniGame2: React.FC<MiniGame2Props> = ({ user, onUpdateUser, onBack
                 borderRadius: '28px',
                 boxShadow: '0 12px 28px rgba(0,0,0,0.08)',
                 cursor: 'pointer',
-                transition: 'transform 0.2s ease, border-color 0.2s ease',
-                transform: seesawTilt === 'right' ? 'translateY(12px)' : 'translateY(0)'
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                transform: seesawTilt === 'right' ? 'translateY(24px) scale(1.03)' : 'translateY(0)'
               }}
             >
               <div style={{ fontSize: '15px', color: '#64748b', fontWeight: '900', marginBottom: '8px' }}>RIGHT CARD</div>
