@@ -1,11 +1,9 @@
 import type { SpeedTouchQuestion, SizeCompareQuestion, TargetGaugeQuestion, BossQuestion } from '../types';
 
-// 무작위 정수 생성
 function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// 배열 셔플
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -15,7 +13,6 @@ function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
-// 1. 미니게임 1: 스피드 터치 문제 생성
 export function generateSpeedTouchQuestion(): SpeedTouchQuestion {
   const type = getRandomInt(1, 4);
   let promptText = '';
@@ -23,23 +20,23 @@ export function generateSpeedTouchQuestion(): SpeedTouchQuestion {
   let wrongAnswers: string[] = [];
 
   if (type === 1) {
-    const cm = getRandomInt(1, 20);
+    const cm = getRandomInt(2, 20);
     const mm = cm * 10;
     promptText = `${mm} mm = ? cm`;
     correctAnswer = `${cm} cm`;
-    wrongAnswers = [`${cm * 10} cm`, `${cm * 100} cm`, `${Math.max(1, cm - 1)} cm`].filter(a => a !== correctAnswer);
+    wrongAnswers = [`${cm * 10} cm`, `${cm * 100} cm`, `${cm + 5} cm`].filter(a => a !== correctAnswer);
   } else if (type === 2) {
-    const m = getRandomInt(1, 15);
+    const m = getRandomInt(2, 15);
     const cm = m * 100;
     promptText = `${cm.toLocaleString()} cm = ? m`;
     correctAnswer = `${m} m`;
-    wrongAnswers = [`${m * 10} m`, `${m * 100} m`, `${Math.max(1, m + 2)} m`].filter(a => a !== correctAnswer);
+    wrongAnswers = [`${m * 10} m`, `${m * 100} m`, `${m + 3} m`].filter(a => a !== correctAnswer);
   } else if (type === 3) {
-    const km = getRandomInt(1, 9);
+    const km = getRandomInt(2, 9);
     const m = km * 1000;
     promptText = `${m.toLocaleString()} m = ? km`;
     correctAnswer = `${km} km`;
-    wrongAnswers = [`${km * 10} km`, `${km * 100} km`, `${Math.max(1, km + 1)} km`].filter(a => a !== correctAnswer);
+    wrongAnswers = [`${km * 10} km`, `${km * 100} km`, `${km + 2} km`].filter(a => a !== correctAnswer);
   } else {
     const m = getRandomInt(1, 5);
     const cm = getRandomInt(5, 95);
@@ -64,7 +61,6 @@ export function generateSpeedTouchQuestion(): SpeedTouchQuestion {
   };
 }
 
-// 2. 미니게임 2: 크기 대결 문제 생성
 export function generateSizeCompareQuestion(): SizeCompareQuestion {
   const targetType: 'longer' | 'shorter' = Math.random() > 0.5 ? 'longer' : 'shorter';
   const category = getRandomInt(1, 3);
@@ -116,7 +112,6 @@ export function generateSizeCompareQuestion(): SizeCompareQuestion {
   };
 }
 
-// 3. 미니게임 3: 타겟 게이지 조합 문제 생성
 export function generateTargetGaugeQuestion(): TargetGaugeQuestion {
   const targetKm = getRandomInt(1, 3);
   const targetM = targetKm * 1000 + getRandomInt(2, 8) * 100;
@@ -150,67 +145,58 @@ export function generateTargetGaugeQuestion(): TargetGaugeQuestion {
   };
 }
 
-// 4. 보스전 5문항 4지선다 퀴즈 생성 (BossQuestion / generateBossQuestions 통일)
+// 4. 보스전 5문항 4지선다 퀴즈 생성 (정답 인덱스 정확도 100% 보장)
 export function generateBossQuestions(): BossQuestion[] {
   const questions: BossQuestion[] = [
     (() => {
-      const cm = getRandomInt(12, 45);
+      const cm = getRandomInt(15, 45);
       const mm = cm * 10;
-      const options = shuffle([
-        `${cm} cm`,
-        `${cm * 10} cm`,
-        `${cm / 10} cm`,
-        `${cm + 10} cm`,
-      ]);
+      const correctStr = `${cm} cm`;
+      const wrongs = [`${cm * 10} cm`, `${cm + 5} cm`, `${cm + 10} cm`].filter(s => s !== correctStr);
+      const options = shuffle([correctStr, ...wrongs]);
       return {
         id: 1,
         questionText: `1번 문제: ${mm} mm는 몇 cm 일까요?`,
         options,
-        correctAnswerIndex: options.indexOf(`${cm} cm`),
+        correctAnswerIndex: options.indexOf(correctStr),
         explanation: `1 cm = 10 mm 이므로 ${mm} mm = ${cm} cm 입니다.`,
       };
     })(),
     
     (() => {
-      const m = getRandomInt(3, 9);
+      const m = getRandomInt(3, 8);
       const cmVal = getRandomInt(10, 90);
       const totalCm = m * 100 + cmVal;
-      const options = shuffle([
-        `${totalCm} cm`,
-        `${m * 10 + cmVal} cm`,
-        `${totalCm * 10} cm`,
-        `${totalCm - 50} cm`,
-      ]);
+      const correctStr = `${totalCm} cm`;
+      const wrongs = [`${m * 10 + cmVal} cm`, `${totalCm + 100} cm`, `${totalCm - 50} cm`].filter(s => s !== correctStr);
+      const options = shuffle([correctStr, ...wrongs]);
       return {
         id: 2,
         questionText: `2번 문제: ${m} m ${cmVal} cm를 cm 단위로만 나타내면 얼마일까요?`,
         options,
-        correctAnswerIndex: options.indexOf(`${totalCm} cm`),
+        correctAnswerIndex: options.indexOf(correctStr),
         explanation: `1 m = 100 cm 이므로 ${m} m = ${m * 100} cm 입니다. 거기에 ${cmVal} cm를 더하면 ${totalCm} cm가 됩니다.`,
       };
     })(),
 
     (() => {
-      const km = getRandomInt(2, 7);
+      const km = getRandomInt(2, 6);
       const m = getRandomInt(150, 850);
       const totalM = km * 1000 + m;
-      const options = shuffle([
-        `${totalM.toLocaleString()} m`,
-        `${(km * 100 + m).toLocaleString()} m`,
-        `${(totalM * 10).toLocaleString()} m`,
-        `${(km * 1000).toLocaleString()} m`,
-      ]);
+      const correctStr = `${totalM.toLocaleString()} m`;
+      const wrongs = [`${(km * 100 + m).toLocaleString()} m`, `${(totalM + 1000).toLocaleString()} m`, `${(km * 1000).toLocaleString()} m`].filter(s => s !== correctStr);
+      const options = shuffle([correctStr, ...wrongs]);
       return {
         id: 3,
         questionText: `3번 문제: ${km} km ${m} m를 m 단위로 바꾸어 적으면 몇 m 일까요?`,
         options,
-        correctAnswerIndex: options.indexOf(`${totalM.toLocaleString()} m`),
+        correctAnswerIndex: options.indexOf(correctStr),
         explanation: `1 km = 1,000 m 이므로 ${km} km = ${km * 1000} m 입니다. 따라서 ${km * 1000} m + ${m} m = ${totalM.toLocaleString()} m 입니다.`,
       };
     })(),
 
     (() => {
-      const m1 = getRandomInt(2, 5);
+      const m1 = getRandomInt(2, 4);
       const cm1 = 40;
       const m2 = getRandomInt(1, 3);
       const cm2 = 80;
@@ -218,12 +204,8 @@ export function generateBossQuestions(): BossQuestion[] {
       const resM = Math.floor(totalCm / 100);
       const resCm = totalCm % 100;
       const correctStr = `${resM} m ${resCm} cm`;
-      const options = shuffle([
-        correctStr,
-        `${m1 + m2} m ${cm1 + cm2} cm`,
-        `${resM + 1} m ${resCm} cm`,
-        `${resM} m ${resCm + 20} cm`,
-      ]);
+      const wrongs = [`${m1 + m2} m ${cm1 + cm2} cm`, `${resM + 1} m ${resCm} cm`, `${resM} m ${resCm + 20} cm`].filter(s => s !== correctStr);
+      const options = shuffle([correctStr, ...wrongs]);
       return {
         id: 4,
         questionText: `4번 문제: (${m1} m ${cm1} cm) + (${m2} m ${cm2} cm) 계산 결과는 얼마일까요?`,
@@ -238,12 +220,13 @@ export function generateBossQuestions(): BossQuestion[] {
       const optB = `4 m 80 cm`;
       const optC = `500 cm`;
       const optD = `4 m`;
+      const correctStr = optC; // 500cm가 가장 긺
       const options = shuffle([optA, optB, optC, optD]);
       return {
         id: 5,
         questionText: `5번 문제: 보기 중 가장 긴 길이는 무엇일까요? (4,500mm / 4m 80cm / 500cm / 4m)`,
         options,
-        correctAnswerIndex: options.indexOf(optC),
+        correctAnswerIndex: options.indexOf(correctStr),
         explanation: `mm, cm, m를 모두 cm로 통일하면: 4,500mm = 450cm / 4m 80cm = 480cm / 500cm = 500cm / 4m = 400cm 입니다. 따라서 500cm가 가장 깁니다!`,
       };
     })(),
