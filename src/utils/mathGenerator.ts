@@ -13,7 +13,6 @@ function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
-// 1. 미니게임 1: 스피드 터치 문제
 export function generateSpeedTouchQuestion(): SpeedTouchQuestion {
   const type = getRandomInt(1, 4);
   let promptText = '';
@@ -62,7 +61,6 @@ export function generateSpeedTouchQuestion(): SpeedTouchQuestion {
   };
 }
 
-// 2. 미니게임 2: 크기 대결 문제
 export function generateSizeCompareQuestion(): SizeCompareQuestion {
   const targetType: 'longer' | 'shorter' = Math.random() > 0.5 ? 'longer' : 'shorter';
   const category = getRandomInt(1, 3);
@@ -114,7 +112,6 @@ export function generateSizeCompareQuestion(): SizeCompareQuestion {
   };
 }
 
-// 3. 미니게임 3: 타겟 게이지 문제
 export function generateTargetGaugeQuestion(): TargetGaugeQuestion {
   const targetKm = getRandomInt(1, 4);
   const targetM = targetKm * 1000 + getRandomInt(2, 8) * 100;
@@ -148,7 +145,7 @@ export function generateTargetGaugeQuestion(): TargetGaugeQuestion {
   };
 }
 
-// 4. 보스전 5문항 100% 무한 무작위 난수 동적 문제 생성기 (매 도전마다 새로운 수치/단위)
+// 4. 보스전 5문항 100% 검증된 정답 보장 동적 퀴즈 생성기
 export function generateBossQuestions(): BossQuestion[] {
   const questions: BossQuestion[] = [];
 
@@ -196,7 +193,7 @@ export function generateBossQuestions(): BossQuestion[] {
     explanation: `1 km = 1,000 m 이므로 ${km3} km = ${km3 * 1000} m 입니다. 따라서 ${totalM3.toLocaleString()} m입니다.`,
   });
 
-  // Q4: 길이 무작위 덧셈 계산
+  // Q4: 길이 무작위 덧셈 계산 (m4b 변수 100% 일치)
   const m4a = getRandomInt(1, 4);
   const cm4a = getRandomInt(30, 70);
   const m4b = getRandomInt(1, 3);
@@ -209,17 +206,17 @@ export function generateBossQuestions(): BossQuestion[] {
   const q4Opts = shuffle([q4Correct, ...q4Wrongs]);
   questions.push({
     id: 4,
-    questionText: `4번 관문: (${m4a} m ${cm4a} cm) + (${m2} m ${cm4b} cm) 계산 결과는 얼마일까요?`,
+    questionText: `4번 관문: (${m4a} m ${cm4a} cm) + (${m4b} m ${cm4b} cm) 계산 결과는 얼마일까요?`,
     options: q4Opts,
     correctAnswerIndex: q4Opts.indexOf(q4Correct),
     explanation: `cm끼리 더하면 ${cm4a + cm4b} cm (${Math.floor((cm4a + cm4b) / 100)}m ${ (cm4a + cm4b) % 100 }cm)가 됩니다. m 합산 결과 ${q4Correct}가 됩니다.`,
   });
 
-  // Q5: 가장 긴 수치 고르기 무작위 조합
-  const baseCm = getRandomInt(400, 700);
+  // Q5: 가장 긴 수치 고르기 무작위 조합 (strB가 100% 무조건 가장 크도록 보장)
+  const baseCm = getRandomInt(450, 750);
   const valA_mm = (baseCm - 40) * 10;
   const valB_cm = baseCm + 80; // 정답!
-  const valC_m = Math.floor((baseCm - 20) / 100);
+  const valC_m = Math.floor((baseCm - 30) / 100);
   const valD_mm = (baseCm - 100) * 10;
 
   const strA = `${valA_mm.toLocaleString()} mm`;
