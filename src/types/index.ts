@@ -52,6 +52,8 @@ export interface BossQuizQuestion {
   explanation: string; // "1 km = 1,000 m 이므로 3 km = 3,000 m 입니다. 따라서 3,000 m + 500 m = 3,500 m 입니다."
 }
 
+export type BossQuestion = BossQuizQuestion;
+
 export interface BossRecord {
   id: string;
   uid: string;
