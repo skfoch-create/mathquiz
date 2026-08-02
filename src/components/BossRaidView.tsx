@@ -142,7 +142,7 @@ export const BossRaidView: React.FC<BossRaidViewProps> = ({ user, onUpdateUser, 
           </div>
 
           <button className="btn-boss-challenge shadow-btn" onClick={handleStartRaid}>
-            <Swords size={22} /> 보스에게 도전하기 (100 G 소진)
+            <Swords size={22} /> 보스전 도전하기 (100 골드)
           </button>
         </div>
       )}
