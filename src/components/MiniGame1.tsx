@@ -19,7 +19,6 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
   const [earnedGold, setEarnedGold] = useState(0);
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
   const startGame = () => {
     setTimeLeft(GAME_DURATION);
@@ -64,31 +63,26 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
     if (option === currentQuestion.correctAnswer) {
       setScore((prev) => prev + 1);
       setCombo((prev) => prev + 1);
-      setFeedback('correct');
     } else {
       setCombo(0);
-      setFeedback('wrong');
     }
 
-    setTimeout(() => {
-      setFeedback(null);
-      setCurrentQuestion(generateSpeedTouchQuestion());
-    }, 250);
+    setCurrentQuestion(generateSpeedTouchQuestion());
   };
 
   return (
-    <div className="game-container notranslate" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div className="game-header-card" style={{ padding: '24px 32px', background: '#ffffff', borderRadius: '24px', border: '2px solid #e0e7ff', display: 'flex', flexDirection: 'column', gap: '8px', boxShadow: '0 10px 25px rgba(99, 102, 241, 0.08)' }}>
+    <div className="game-container notranslate">
+      <div className="game-header-card phantom-card">
         <div>
-          <span style={{ background: '#e0e7ff', color: '#4338ca', padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}>⚡ 25초 타임어택</span>
+          <span className="mode-badge badge-a">⚡ 25초 타임어택</span>
         </div>
-        <h2 style={{ fontSize: '26px', fontWeight: '900', color: '#1e1b4b', margin: '4px 0' }}>⚡ 스피드탭</h2>
-        <p style={{ fontSize: '15px', color: '#64748b', margin: 0 }}>25초 동안 수치와 똑같은 정답 카드를 번개처럼 빠르게 탭하세요!</p>
+        <h2>⚡ 스피드탭</h2>
+        <p>25초 동안 수치와 똑같은 정답 카드를 번개처럼 빠르게 탭하세요!</p>
 
         {!isPlaying && !isGameOver && (
           <div style={{ marginTop: '12px' }}>
-            <button onClick={startGame} style={{ padding: '12px 28px', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff', border: 'none', borderRadius: '16px', fontSize: '17px', fontWeight: '900', cursor: 'pointer', boxShadow: '0 6px 18px rgba(16, 185, 129, 0.35)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              🚀 게임 시작 (25초)
+            <button className="btn-start-game" onClick={startGame}>
+              🚀 게임 시작하기 (25초)
             </button>
           </div>
         )}
@@ -96,47 +90,33 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
 
       {isPlaying && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', background: '#ffffff', padding: '16px 24px', borderRadius: '20px', border: '2px solid #e0e7ff', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#d97706', background: '#fef3c7', padding: '6px 16px', borderRadius: '20px', fontWeight: '800' }}>
-              <Timer size={20} />
-              <span style={{ fontSize: '18px' }}>{timeLeft}초 남음</span>
+          <div className="game-status-bar phantom-card">
+            <div className="timer-box">
+              <Timer size={22} />
+              <span>{timeLeft}초 남음</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ea580c', background: '#ffedd5', padding: '6px 16px', borderRadius: '20px', fontWeight: '800' }}>
-              <Zap size={20} />
-              <span style={{ fontSize: '18px' }}>콤보: <b>{combo}</b></span>
+            <div className="combo-box">
+              <Zap size={22} />
+              <span>콤보: <b>{combo}</b></span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4338ca', background: '#e0e7ff', padding: '6px 16px', borderRadius: '20px', fontWeight: '800' }}>
-              <span style={{ fontSize: '18px' }}>맞춘 개수: <b>{score}개</b></span>
+            <div className="score-box">
+              <span>맞춘 개수: <b>{score}개</b></span>
             </div>
           </div>
 
           {currentQuestion && (
-            <div style={{ padding: '36px 28px', textAlign: 'center', background: '#ffffff', border: '2px solid #e0e7ff', borderRadius: '28px', boxShadow: '0 15px 35px rgba(99, 102, 241, 0.12)' }}>
+            <div className="quiz-card phantom-card">
               <div>
-                <span style={{ color: '#64748b', fontSize: '16px', fontWeight: '800' }}>다음 수치와 같은 것은?</span>
-                <h1 style={{ fontSize: '44px', fontWeight: '900', color: '#1e1b4b', margin: '16px 0 28px', letterSpacing: '1px' }}>{currentQuestion.promptText}</h1>
+                <span className="prompt-label">다음 수치와 같은 것은?</span>
+                <h1 className="prompt-text">{currentQuestion.promptText}</h1>
               </div>
 
-              {/* 2x2 정답 선택지 그리드 (인라인 강제 지정) */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', width: '100%', marginTop: '20px' }}>
+              <div className="options-grid">
                 {currentQuestion.options.map((opt, idx) => (
                   <button
                     key={idx}
+                    className="option-btn"
                     onClick={() => handleSelectOption(opt)}
-                    style={{
-                      padding: '24px 16px',
-                      fontSize: '24px',
-                      fontWeight: '900',
-                      background: '#ffffff',
-                      border: '3px solid #cbd5e1',
-                      borderRadius: '20px',
-                      color: '#0f172a',
-                      cursor: 'pointer',
-                      boxShadow: '0 6px 16px rgba(0, 0, 0, 0.06)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
                   >
                     {opt}
                   </button>
@@ -148,27 +128,27 @@ export const MiniGame1: React.FC<MiniGame1Props> = ({ user, onUpdateUser, onBack
       )}
 
       {isGameOver && (
-        <div style={{ padding: '40px', textAlign: 'center', background: '#ffffff', borderRadius: '28px', border: '2px solid #e0e7ff' }}>
-          <h2 style={{ fontSize: '28px', fontWeight: '900', color: '#1e1b4b' }}>🎉 게임 종료!</h2>
+        <div className="phantom-card" style={{ padding: '44px 36px', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: '900', color: '#1e1b4b' }}>🎉 게임 종료!</h2>
           <p style={{ color: '#64748b', fontSize: '16px', margin: '8px 0 24px' }}>25초 동안 알차게 퀴즈를 풀었습니다!</p>
           <div style={{ display: 'flex', gap: '16px', margin: '24px 0' }}>
-            <div style={{ flex: 1, padding: '20px', background: '#f8fafc', borderRadius: '16px' }}>
-              <span style={{ fontSize: '13px', color: '#64748b', display: 'block' }}>정답 개수</span>
-              <span style={{ fontSize: '26px', fontWeight: '900', color: '#0f172a' }}>{score} 개</span>
+            <div style={{ flex: 1, padding: '20px', background: '#f8fafc', borderRadius: '20px' }}>
+              <span style={{ fontSize: '14px', color: '#64748b', display: 'block' }}>정답 개수</span>
+              <span style={{ fontSize: '28px', fontWeight: '900', color: '#0f172a' }}>{score} 개</span>
             </div>
-            <div style={{ flex: 1, padding: '20px', background: '#fef3c7', borderRadius: '16px' }}>
-              <span style={{ fontSize: '13px', color: '#b45309', display: 'block' }}>획득한 골드</span>
-              <span style={{ fontSize: '26px', fontWeight: '900', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <Coins size={22} /> +{earnedGold} 골드
+            <div style={{ flex: 1, padding: '20px', background: '#fef3c7', borderRadius: '20px' }}>
+              <span style={{ fontSize: '14px', color: '#b45309', display: 'block' }}>획득한 골드</span>
+              <span style={{ fontSize: '28px', fontWeight: '900', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                <Coins size={24} /> +{earnedGold} 골드
               </span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-            <button onClick={startGame} style={{ flex: 1, padding: '14px 24px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '16px', fontWeight: '800', fontSize: '16px', cursor: 'pointer' }}>
+          <div style={{ display: 'flex', gap: '14px', marginTop: '24px' }}>
+            <button onClick={startGame} style={{ flex: 1, padding: '16px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '18px', fontWeight: '900', fontSize: '17px', cursor: 'pointer' }}>
               <RotateCcw size={18} /> 다시 하기
             </button>
-            <button onClick={onBackToLobby} style={{ flex: 1, padding: '14px 24px', background: '#4f46e5', color: '#ffffff', border: 'none', borderRadius: '16px', fontWeight: '800', fontSize: '16px', cursor: 'pointer' }}>
+            <button onClick={onBackToLobby} style={{ flex: 1, padding: '16px', background: '#4f46e5', color: '#ffffff', border: 'none', borderRadius: '18px', fontWeight: '900', fontSize: '17px', cursor: 'pointer' }}>
               로비로 돌아가기 <ArrowRight size={18} />
             </button>
           </div>
