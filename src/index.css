@@ -23,7 +23,7 @@
   --text-sub: #64748b;
   
   --radius-lg: 24px;
-  --radius-md: 16px;
+  --radius-md: 18px;
   --radius-sm: 12px;
 }
 
@@ -341,51 +341,50 @@ body {
   color: var(--text-sub);
 }
 
-/* 정돈된 미니게임 헤더 카드 구조 (세로 전면 배치) */
 .game-header-card {
-  padding: 28px 32px !important;
+  padding: 24px 32px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
   gap: 8px !important;
   background: #ffffff !important;
+  margin-bottom: 20px !important;
 }
 
 .game-header-card h2 {
-  font-size: 26px !weight: 900;
-  color: #1e1b4b;
+  font-size: 26px !important;
+  font-weight: 900 !important;
+  color: #1e1b4b !important;
 }
 
 .game-header-card p {
-  font-size: 15px;
-  color: var(--text-sub);
-  margin-bottom: 12px;
+  font-size: 15px !important;
+  color: var(--text-sub) !important;
 }
 
 .start-btn-wrapper {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
-/* 슬림하고 화사한 알맞은 비율의 게임 시작 버튼 */
 .btn-start-game {
-  padding: 10px 24px !important;
+  padding: 12px 28px !important;
   background: linear-gradient(135deg, #10b981, #059669) !important;
   color: #ffffff !important;
   border: none !important;
-  border-radius: 14px !important;
-  font-size: 15px !important;
+  border-radius: 16px !important;
+  font-size: 17px !important;
   font-weight: 900 !important;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35) !important;
   display: inline-flex !important;
   align-items: center;
-  gap: 6px;
-  transition: transform 0.2s ease !important;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .btn-start-game:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45) !important;
 }
 
 .btn-boss-entry, .btn-boss-challenge {
@@ -406,23 +405,223 @@ body {
   transition: transform 0.2s ease !important;
 }
 
-.btn-boss-entry:hover, .btn-boss-challenge:hover {
-  transform: translateY(-2px) !important;
+/* 🎮 게임 플레이 뷰 비주얼 대폭 게이미피케이션 개편! */
+.game-play-area {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
 }
 
-.glass-btn, .option-btn, .boss-opt-btn, .compare-card, .block-btn {
-  border-radius: var(--radius-md) !important;
-  border: 2px solid #e2e8f0 !important;
+.game-status-bar {
+  display: flex !important;
+  justify-content: space-around !important;
+  align-items: center !important;
   background: #ffffff !important;
+  padding: 18px 28px !important;
+  border-radius: var(--radius-lg) !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  border: 2px solid #e0e7ff !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.timer-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #d97706 !important;
+  background: #fef3c7 !important;
+  padding: 6px 16px !important;
+  border-radius: 20px !important;
+}
+
+.combo-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #ea580c !important;
+  background: #ffedd5 !important;
+  padding: 6px 16px !important;
+  border-radius: 20px !important;
+}
+
+.score-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #4338ca !important;
+  background: #e0e7ff !important;
+  padding: 6px 16px !important;
+  border-radius: 20px !important;
+}
+
+.quiz-card {
+  padding: 40px 32px !important;
+  text-align: center !important;
+  background: #ffffff !important;
+  border: 2px solid #e0e7ff !important;
+  border-radius: 28px !important;
+  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.1) !important;
+}
+
+.prompt-display {
+  margin-bottom: 28px !important;
+}
+
+.prompt-label {
+  color: #64748b !important;
+  font-size: 16px !important;
   font-weight: 800 !important;
-  cursor: pointer;
+}
+
+.prompt-text {
+  font-size: 48px !important;
+  font-weight: 900 !important;
+  margin-top: 12px !important;
+  color: #1e1b4b !important;
+  letter-spacing: 1px !important;
+}
+
+/* 2x2 신나는 입체 퀴즈 버튼 그리드 */
+.options-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 20px !important;
+  margin-top: 24px !important;
+}
+
+.option-btn {
+  padding: 24px 20px !important;
+  font-size: 26px !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #ffffff, #f8fafc) !important;
+  border: 3px solid #cbd5e1 !important;
+  border-radius: 24px !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06) !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.option-btn:hover {
+  background: linear-gradient(135deg, #ffffff, #e0e7ff) !important;
+  border-color: #4f46e5 !important;
+  color: #4338ca !important;
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.2) !important;
+}
+
+/* 비교 게임 (Game 2) */
+.instruction-banner {
+  text-align: center !important;
+  padding: 20px !important;
+  background: #ffffff !important;
+  border-radius: var(--radius-lg) !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  border: 2px solid #e0e7ff !important;
+}
+
+.compare-grid {
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+  margin-top: 10px !important;
+}
+
+.compare-card {
+  flex: 1 !important;
+  padding: 44px 24px !important;
+  text-align: center !important;
+  background: #ffffff !important;
+  border: 3px solid #cbd5e1 !important;
+  border-radius: 28px !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06) !important;
+  cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
 
-.glass-btn:hover, .option-btn:hover, .boss-opt-btn:hover, .compare-card:hover {
+.compare-card:hover {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.15) !important;
-  transform: translateY(-2px) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 14px 30px rgba(79, 70, 229, 0.2) !important;
+}
+
+.compare-value {
+  font-size: 34px !important;
+  font-weight: 900 !important;
+  color: #1e1b4b !important;
+}
+
+.vs-badge {
+  font-size: 28px !important;
+  font-weight: 900 !important;
+  color: #d97706 !important;
+  background: #fef3c7 !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* 조각합체전 (Game 3) */
+.target-card {
+  padding: 28px !important;
+  text-align: center !important;
+  background: #ffffff !important;
+  border: 2px solid #e0e7ff !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+.gauge-container {
+  width: 100% !important;
+  height: 38px !important;
+  background: #f1f5f9 !important;
+  border-radius: 20px !important;
+  margin-top: 16px !important;
+  overflow: hidden !important;
+  border: 2px solid #cbd5e1 !important;
+}
+
+.gauge-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #10b981, #059669) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+}
+
+.blocks-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  justify-content: center !important;
+  margin-top: 20px !important;
+}
+
+.block-btn {
+  padding: 20px 28px !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  background: #ffffff !important;
+  border: 3px solid #cbd5e1 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+.block-btn.selected {
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+  border-color: var(--primary-color) !important;
 }
 
 .hall-banner {
